@@ -3,310 +3,251 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>🌿 空花チラシメーカー</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0">
+<title>空花チラシメーカー</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet">
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#f4f0e8;min-height:100vh}</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#f4f0e8;min-height:100vh}
+.header{background:linear-gradient(135deg,#5a3e1b,#8b6914);color:#fff;padding:12px 16px}
+.header h1{font-size:17px;font-weight:900}
+.header p{font-size:10px;opacity:.8}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e8e2d8;position:sticky;top:0;z-index:10}
+.tabs button{flex:1;padding:10px 0;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;background:#fff;color:#aaa;border-bottom:3px solid transparent}
+.tabs button.active{background:#faf8f4;color:#5a3e1b;border-bottom-color:#8b6914}
+.edit-area{padding:12px 14px 80px}
+.edit-area h3{font-size:14px;font-weight:900;color:#5a3e1b;margin:14px 0 6px;border-bottom:2px solid #d4a05340;padding-bottom:4px}
+.edit-area input{width:100%;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:15px;box-sizing:border-box;font-family:inherit}
+.row{display:flex;gap:6px;margin-top:6px}
+.card{background:#faf8f4;border:1px solid #e8e2d8;border-radius:8px;padding:8px;margin-bottom:6px}
+.card .top{display:flex;gap:6px;margin-bottom:4px}
+.card .emojis{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:4px}
+.card .emojis button{font-size:16px;background:none;border:1px solid #e8e2d8;border-radius:4px;width:28px;height:28px;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+.card .emojis button.sel{background:#f0e6d0;border:2px solid #8b6914}
+.card .bottom{display:flex;gap:6px}
+.del-btn{background:#e74c3c;color:#fff;border:none;border-radius:6px;width:36px;height:36px;font-size:18px;cursor:pointer;flex-shrink:0}
+.add-btn{border:none;border-radius:6px;padding:8px 0;width:100%;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;color:#fff}
+.ep{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px}
+.ep button{font-size:20px;background:none;border:1px solid #e8e2d8;border-radius:6px;width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.save-area{padding:16px}
+.save-area .box{background:#fff;border-radius:10px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.save-area .box h3{font-size:15px;font-weight:900;color:#5a3e1b;margin-bottom:8px}
+.save-area .box p{font-size:12px;color:#888;margin-bottom:10px}
+.save-btn{background:#27ae60;color:#fff;border:none;border-radius:8px;padding:14px 0;width:100%;font-size:15px;font-weight:700;cursor:pointer}
+.load-label{display:block;text-align:center;background:#3498db;color:#fff;border-radius:8px;padding:14px 0;font-size:15px;font-weight:700;cursor:pointer}
+.guide{background:#fef9e7;border-radius:10px;padding:14px;border:1px solid #f0d78c}
+.guide h3{font-size:13px;font-weight:900;color:#8b6914}
+.guide p{font-size:13px;color:#6b4c2a;line-height:2.2;margin-top:6px}
+.preview-area{padding:8px;overflow-x:auto}
+.preview-area .hint{font-size:11px;color:#888;text-align:center;margin-bottom:6px}
+</style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState } = React;
+<div class="header"><h1>🌿 空花チラシメーカー</h1><p>商品名と価格を入力するだけ！</p></div>
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
 
-const MAX_VEG = 13, MAX_FRUIT = 6, MAX_CITRUS = 6;
+<script>
+var MAX_VEG=13,MAX_FRUIT=6,MAX_CITRUS=6;
+var EF=["🍉","🍓","🍈","🍅","🍊","🍋","🍌","🍎","🍏","🍐","🍑","🍒","🫐","🥝","🥭","🍍","🍇","🫒","🥥","🍆"];
+var EV=["🥬","🥕","🧄","🧅","🫑","🥔","🍠","🎋","🌽","🥦","🥒","🫛","🥗","🍄","🫚","🥜"];
+var D={
+  date:"2026年4月26日(土)",time:"14:00〜18:00",
+  feat:{label:"大人気",origin:"熊本産",name:"スイカ（熊本）",unit:"1玉",price:"2000",emoji:"🍉"},
+  special:{label:"大特価!",note:"いちご品種色々 早い者勝ち!",emoji:"🍓",name:"いちご",price:"300",bulkUnit:"4パック",bulkPrice:"1,000",bulkNote:"お得!"},
+  veg:[
+    {e:"🧄",n:"にんにく",u:"1袋(在庫限り)",p:"100"},
+    {e:"🧅",n:"玉ねぎ（ひね）",u:"1袋",p:"100"},
+    {e:"🥕",n:"人参",u:"1袋(4本入)",p:"100"},
+    {e:"🫑",n:"ピーマン",u:"1袋",p:"100"},
+    {e:"🥔",n:"ながいも（八戸）",u:"1袋",p:"200"},
+    {e:"🍠",n:"さつまいも（八戸）",u:"1本",p:"100"},
+    {e:"🍠",n:"シルクスィート",u:"1箱",p:"500"},
+    {e:"🎋",n:"筍（タケノコ）S〜L",u:"",p:"時価"}
+  ],
+  fruit:[{e:"🍈",n:"メロン",u:"1玉",p:"300"},{e:"🍅",n:"中玉トマト（ミディ）",u:"1パック",p:"200"}],
+  citrus:[{e:"🍊",n:"甘夏",u:"3個",p:"200"},{e:"🍊",n:"清見オレンジ",u:"1個",p:"100"},{e:"🍊",n:"八朔（はっさく）",u:"1個",p:"100"}],
+  notes:["いちごは1家族様につき、最大5ケースまで。","業者様と思われる方による大量購入は、禁止とさせていただきます。"],
+  footer:"ここに掲載していない商品も多数用意してます！"
+};
+var tab="edit";
 
-const DEFAULT = {
-date: “2026年4月26日(土)”, time: “14:00〜18:00”,
-feat: { label: “大人気”, origin: “熊本産”, name: “スイカ（熊本）”, unit: “1玉”, price: “2000”, emoji: “🍉” },
-special: { label: “大特価!”, note: “いちご品種色々 早い者勝ち!”, emoji: “🍓”, name: “いちご”, price: “300”, bulkUnit: “4パック”, bulkPrice: “1,000”, bulkNote: “お得!” },
-veg: [
-{ e: “🧄”, n: “にんにく”, u: “1袋(在庫限り)”, p: “100” },
-{ e: “🧅”, n: “玉ねぎ（ひね）”, u: “1袋”, p: “100” },
-{ e: “🥕”, n: “人参”, u: “1袋(4本入)”, p: “100” },
-{ e: “🫑”, n: “ピーマン”, u: “1袋”, p: “100” },
-{ e: “🥔”, n: “ながいも（八戸）”, u: “1袋”, p: “200” },
-{ e: “🍠”, n: “さつまいも（八戸）”, u: “1本”, p: “100” },
-{ e: “🍠”, n: “シルクスィート”, u: “1箱”, p: “500” },
-{ e: “🎋”, n: “筍（タケノコ）S〜L”, u: “”, p: “時価” },
-],
-fruit: [
-{ e: “🍈”, n: “メロン”, u: “1玉”, p: “300” },
-{ e: “🍅”, n: “中玉トマト（ミディ）”, u: “1パック”, p: “200” },
-],
-citrus: [
-{ e: “🍊”, n: “甘夏”, u: “3個”, p: “200” },
-{ e: “🍊”, n: “清見オレンジ”, u: “1個”, p: “100” },
-{ e: “🍊”, n: “八朔（はっさく）”, u: “1個”, p: “100” },
-],
-notes: [“いちごは1家族様につき、最大5ケースまで。”, “業者様と思われる方による大量購入は、禁止とさせていただきます。”],
-footer: “ここに掲載していない商品も多数用意してます！”,
-};
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function pr(v,sz){var m=v.match(/^(\d[\d,]*)(.*)/);if(m)return'<span style="font-size:'+sz+'px;font-weight:900;color:#b91c1c">'+esc(m[1])+'</span><span style="font-size:'+Math.round(sz*.55)+'px;font-weight:800;color:#b91c1c">'+esc(m[2])+'</span>';return'<span style="font-size:'+Math.round(sz*.75)+'px;font-weight:800;color:#b91c1c">'+esc(v)+'</span>'}
 
-function Flyer({ d }) {
-const Pr = ({ v, sz = 20 }) => {
-const m = v.match(/^(\d[\d,]*)(.*)$/);
-if (m) return <><span style={{ fontSize: sz, fontWeight: 900, color: “#b91c1c” }}>{m[1]}</span><span style={{ fontSize: sz * 0.55, fontWeight: 800, color: “#b91c1c” }}>{m[2]}</span></>;
-return <span style={{ fontSize: sz * 0.75, fontWeight: 800, color: “#b91c1c” }}>{v}</span>;
-};
-const Row = ({ item, last }) => (
-<div style={{ display: “flex”, justifyContent: “space-between”, alignItems: “center”, padding: “4px 0”, borderBottom: last ? “none” : “1px dotted #d5c9b5” }}>
-<div style={{ display: “flex”, alignItems: “center”, gap: 4, flex: 1, minWidth: 0 }}>
-<span style={{ fontSize: 14, flexShrink: 0 }}>{item.e}</span>
-<span style={{ fontWeight: 800, fontSize: 13 }}>{item.n}</span>
-<span style={{ fontSize: 9, color: “#888” }}>{item.u}</span>
-</div>
-<div style={{ flexShrink: 0 }}><Pr v={item.p + “円”} sz={16} /></div>
-</div>
-);
-const EmptyRow = ({ last }) => (
-<div style={{ display: “flex”, justifyContent: “space-between”, alignItems: “center”, padding: “4px 0”, borderBottom: last ? “none” : “1px dotted #d5c9b5” }}>
-<span style={{ fontSize: 14, color: “#8b7b60”, letterSpacing: 2 }}>・・・・・・・・・・・・・</span>
-<span style={{ fontSize: 14, color: “#8b7b60” }}>・・・円</span>
-</div>
-);
-const Sec = ({ title, color, items, max, style: s }) => {
-const empties = max - items.length;
-return (
-<div style={s}>
-<div style={{ fontSize: 12, fontWeight: 900, color, textAlign: “center”, borderBottom: `1.5px dashed ${color}50`, paddingBottom: 2, marginBottom: 2 }}>{title}</div>
-{items.map((it, i) => <Row key={i} item={it} last={i === items.length - 1 && empties === 0} />)}
-{Array.from({ length: empties }).map((_, i) => <EmptyRow key={`e${i}`} last={i === empties - 1} />)}
-</div>
-);
-};
-return (
-<div id=“flyer” style={{
-width: “297mm”, height: “210mm”,
-background: “linear-gradient(145deg,#f5e6c8,#ede0c0,#f0ddb5,#e8d5b0)”,
-fontFamily: “‘Noto Serif JP’,‘Yu Mincho’,‘Hiragino Mincho Pro’,‘MS Mincho’,serif”,
-color: “#3e2c1a”, padding: “20mm 6mm 20mm”, boxSizing: “border-box”,
-display: “flex”, flexDirection: “column”, position: “relative”, overflow: “hidden”,
-}}>
-<div style={{ position: “absolute”, inset: “3mm”, border: “2.5px double #c4a26580”, borderRadius: 6, pointerEvents: “none” }} />
-<div style={{ display: “flex”, flex: 1, padding: “0 3mm” }}>
-<div style={{ flex: “0 0 43%”, display: “flex”, flexDirection: “column”, paddingRight: “4mm” }}>
-<div style={{ border: “2.5px solid #c0392b”, borderRadius: 10, padding: “10px 12px 8px”, background: “rgba(255,253,224,0.4)”, position: “relative”, marginBottom: 8 }}>
-<div style={{ position: “absolute”, top: -10, left: 10, background: “#c0392b”, color: “#fff”, padding: “2px 14px”, borderRadius: 10, fontSize: 12, fontWeight: 900 }}>{d.feat.label}</div>
-<div style={{ fontSize: 9, color: “#8b6914”, fontWeight: 700, marginTop: 8 }}>{d.feat.origin}</div>
-<div style={{ display: “flex”, justifyContent: “space-between”, alignItems: “center” }}>
-<div>
-<div style={{ fontSize: 20, fontWeight: 900, margin: “2px 0” }}>{d.feat.name}</div>
-<span style={{ fontSize: 12 }}>{d.feat.unit} </span><Pr v={d.feat.price + “円”} sz={28} />
-</div>
-<div style={{ position: “relative”, width: 70, height: 70, flexShrink: 0 }}>
-<span style={{ position: “absolute”, top: 0, left: 0, fontSize: 45, lineHeight: 1 }}>{d.feat.emoji}</span>
-<span style={{ position: “absolute”, top: 20, left: 25, fontSize: 35, lineHeight: 1, opacity: 0.85 }}>{d.feat.emoji}</span>
-<span style={{ position: “absolute”, top: -5, left: 35, fontSize: 25, lineHeight: 1, opacity: 0.7 }}>{d.feat.emoji}</span>
-</div>
-</div>
-</div>
-<div style={{ flex: 1, display: “flex”, flexDirection: “column” }}>
-<Sec title=“🥬 今週の野菜ラインナップ” color=”#2d6a2e” items={d.veg} max={MAX_VEG} style={{ flex: 1 }} />
-</div>
-<div style={{ fontSize: 7, color: “#6b4c2a”, lineHeight: 1.5, paddingTop: 4, borderTop: “1px solid #d5c9b540” }}>
-{d.notes.map((n, i) => <div key={i}>・{n}</div>)}
-</div>
-</div>
-<div style={{ flex: “0 0 14%”, display: “flex”, flexDirection: “column”, alignItems: “center” }}>
-<div style={{ writingMode: “vertical-rl”, fontSize: 42, fontWeight: 900, letterSpacing: “0.12em”, color: “#3e2a10”, lineHeight: 1.2, flex: 1 }}>
-今週の直売メニュー
-</div>
-<div style={{ textAlign: “center”, fontSize: 9, fontWeight: 700, color: “#6b4c2a” }}>
-{d.date}<br />{d.time}
-</div>
-</div>
-<div style={{ flex: “0 0 43%”, display: “flex”, flexDirection: “column”, paddingLeft: “4mm” }}>
-<div style={{ border: “2.5px solid #e74c3c”, borderRadius: 10, padding: “10px 12px 8px”, background: “rgba(255,220,220,0.3)”, position: “relative”, marginBottom: 8 }}>
-<div style={{ position: “absolute”, top: -10, right: 10, background: “#e74c3c”, color: “#fff”, padding: “2px 14px”, borderRadius: 10, fontSize: 12, fontWeight: 900 }}>{d.special.label}</div>
-<div style={{ fontSize: 8, color: “#e74c3c”, fontWeight: 700 }}>{d.special.note}</div>
-<div style={{ display: “flex”, alignItems: “center”, gap: 8, margin: “5px 0” }}>
-<div style={{ position: “relative”, width: 55, height: 45, flexShrink: 0 }}>
-<span style={{ position: “absolute”, top: 0, left: 0, fontSize: 30, lineHeight: 1 }}>{d.special.emoji}</span>
-<span style={{ position: “absolute”, top: 12, left: 18, fontSize: 22, lineHeight: 1, opacity: 0.85 }}>{d.special.emoji}</span>
-<span style={{ position: “absolute”, top: -3, left: 28, fontSize: 18, lineHeight: 1, opacity: 0.7 }}>{d.special.emoji}</span>
-</div>
-<span style={{ fontSize: 22, fontWeight: 900 }}>{d.special.name}</span>
-<div style={{ marginLeft: “auto” }}><Pr v={d.special.price + “円”} sz={28} /></div>
-</div>
-<div style={{ background: “rgba(231,76,60,0.08)”, borderRadius: 6, padding: “3px 10px”, textAlign: “center” }}>
-<span style={{ fontSize: 13, fontWeight: 700 }}>{d.special.bulkUnit} </span>
-<Pr v={d.special.bulkPrice + “円”} sz={22} />
-<span style={{ fontSize: 10, color: “#e74c3c”, fontWeight: 700 }}> ({d.special.bulkNote})</span>
-</div>
-</div>
-<div style={{ flex: 1, display: “flex”, flexDirection: “column”, gap: 6 }}>
-<Sec title="🍈 おススメ果物＆トマト" color="#c0392b" items={d.fruit} max={MAX_FRUIT} style={{}} />
-<Sec title="🍊 柑橘いろいろ" color="#d4880f" items={d.citrus} max={MAX_CITRUS} style={{}} />
-</div>
-<div style={{ textAlign: “center”, fontSize: 12, fontWeight: 800, color: “#5a3e1b”, paddingTop: 4, borderTop: “1px solid #d5c9b540” }}>{d.footer}</div>
-</div>
-</div>
-<div style={{ textAlign: “center”, fontSize: 13, fontWeight: 900, color: “#5a3e1b”, padding: “2mm 0 0” }}>
-🌸 皆様のご来店をお待ちしてます 🌸
-</div>
-</div>
-);
+function buildFlyer(){
+  function row(it){return'<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px dotted #d5c9b5"><div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0"><span style="font-size:14px;flex-shrink:0">'+it.e+'</span><span style="font-weight:800;font-size:13px">'+esc(it.n)+'</span><span style="font-size:9px;color:#888">'+esc(it.u)+'</span></div><div style="flex-shrink:0">'+pr(it.p+"円",16)+'</div></div>'}
+  function emptyRow(){return'<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px dotted #d5c9b5"><span style="font-size:14px;color:#8b7b60;letter-spacing:2px">・・・・・・・・・・・・・</span><span style="font-size:14px;color:#8b7b60">・・・円</span></div>'}
+  function sec(title,color,items,max){var h='<div style="font-size:12px;font-weight:900;color:'+color+';text-align:center;border-bottom:1.5px dashed '+color+'50;padding-bottom:2px;margin-bottom:2px">'+title+'</div>';for(var i=0;i<items.length;i++)h+=row(items[i]);for(var j=0;j<max-items.length;j++)h+=emptyRow();return h}
+
+  return'<div id="flyer" style="width:297mm;height:210mm;background:linear-gradient(145deg,#f5e6c8,#ede0c0,#f0ddb5,#e8d5b0);font-family:\'Noto Serif JP\',\'Yu Mincho\',serif;color:#3e2c1a;padding:20mm 6mm 20mm;box-sizing:border-box;display:flex;flex-direction:column;position:relative;overflow:hidden">'
+  +'<div style="position:absolute;inset:3mm;border:2.5px double #c4a26580;border-radius:6px;pointer-events:none"></div>'
+  +'<div style="display:flex;flex:1;padding:0 3mm">'
+  // LEFT
+  +'<div style="flex:0 0 43%;display:flex;flex-direction:column;padding-right:4mm">'
+  +'<div style="border:2.5px solid #c0392b;border-radius:10px;padding:10px 12px 8px;background:rgba(255,253,224,0.4);position:relative;margin-bottom:8px">'
+  +'<div style="position:absolute;top:-10px;left:10px;background:#c0392b;color:#fff;padding:2px 14px;border-radius:10px;font-size:12px;font-weight:900">'+esc(D.feat.label)+'</div>'
+  +'<div style="font-size:9px;color:#8b6914;font-weight:700;margin-top:8px">'+esc(D.feat.origin)+'</div>'
+  +'<div style="display:flex;justify-content:space-between;align-items:center"><div>'
+  +'<div style="font-size:20px;font-weight:900;margin:2px 0">'+esc(D.feat.name)+'</div>'
+  +'<span style="font-size:12px">'+esc(D.feat.unit)+' </span>'+pr(D.feat.price+"円",28)
+  +'</div><div style="position:relative;width:70px;height:70px;flex-shrink:0">'
+  +'<span style="position:absolute;top:0;left:0;font-size:45px;line-height:1">'+D.feat.emoji+'</span>'
+  +'<span style="position:absolute;top:20px;left:25px;font-size:35px;line-height:1;opacity:.85">'+D.feat.emoji+'</span>'
+  +'<span style="position:absolute;top:-5px;left:35px;font-size:25px;line-height:1;opacity:.7">'+D.feat.emoji+'</span>'
+  +'</div></div></div>'
+  +'<div style="flex:1;display:flex;flex-direction:column">'+sec("🥬 今週の野菜ラインナップ","#2d6a2e",D.veg,MAX_VEG)+'</div>'
+  +'<div style="font-size:7px;color:#6b4c2a;line-height:1.5;padding-top:4px;border-top:1px solid #d5c9b540">'+D.notes.map(function(n){return'・'+esc(n)}).join('<br>')+'</div>'
+  +'</div>'
+  // CENTER
+  +'<div style="flex:0 0 14%;display:flex;flex-direction:column;align-items:center">'
+  +'<div style="writing-mode:vertical-rl;font-size:42px;font-weight:900;letter-spacing:.12em;color:#3e2a10;line-height:1.2;flex:1">今週の直売メニュー</div>'
+  +'<div style="text-align:center;font-size:9px;font-weight:700;color:#6b4c2a">'+esc(D.date)+'<br>'+esc(D.time)+'</div>'
+  +'</div>'
+  // RIGHT
+  +'<div style="flex:0 0 43%;display:flex;flex-direction:column;padding-left:4mm">'
+  +'<div style="border:2.5px solid #e74c3c;border-radius:10px;padding:10px 12px 8px;background:rgba(255,220,220,0.3);position:relative;margin-bottom:8px">'
+  +'<div style="position:absolute;top:-10px;right:10px;background:#e74c3c;color:#fff;padding:2px 14px;border-radius:10px;font-size:12px;font-weight:900">'+esc(D.special.label)+'</div>'
+  +'<div style="font-size:8px;color:#e74c3c;font-weight:700">'+esc(D.special.note)+'</div>'
+  +'<div style="display:flex;align-items:center;gap:8px;margin:5px 0">'
+  +'<div style="position:relative;width:55px;height:45px;flex-shrink:0">'
+  +'<span style="position:absolute;top:0;left:0;font-size:30px;line-height:1">'+D.special.emoji+'</span>'
+  +'<span style="position:absolute;top:12px;left:18px;font-size:22px;line-height:1;opacity:.85">'+D.special.emoji+'</span>'
+  +'<span style="position:absolute;top:-3px;left:28px;font-size:18px;line-height:1;opacity:.7">'+D.special.emoji+'</span>'
+  +'</div>'
+  +'<span style="font-size:22px;font-weight:900">'+esc(D.special.name)+'</span>'
+  +'<div style="margin-left:auto">'+pr(D.special.price+"円",28)+'</div>'
+  +'</div>'
+  +'<div style="background:rgba(231,76,60,.08);border-radius:6px;padding:3px 10px;text-align:center">'
+  +'<span style="font-size:13px;font-weight:700">'+esc(D.special.bulkUnit)+' </span>'
+  +pr(D.special.bulkPrice+"円",22)
+  +'<span style="font-size:10px;color:#e74c3c;font-weight:700"> ('+esc(D.special.bulkNote)+')</span>'
+  +'</div></div>'
+  +'<div style="flex:1;display:flex;flex-direction:column;gap:6px">'
+  +sec("🍈 おススメ果物＆トマト","#c0392b",D.fruit,MAX_FRUIT)
+  +sec("🍊 柑橘いろいろ","#d4880f",D.citrus,MAX_CITRUS)
+  +'</div>'
+  +'<div style="text-align:center;font-size:12px;font-weight:800;color:#5a3e1b;padding-top:4px;border-top:1px solid #d5c9b540">'+esc(D.footer)+'</div>'
+  +'</div></div>'
+  +'<div style="text-align:center;font-size:13px;font-weight:900;color:#5a3e1b;padding:2mm 0 0">🌸 皆様のご来店をお待ちしてます 🌸</div>'
+  +'</div>';
 }
 
-function Editor({ d, set }) {
-const u = (path, val) => set(prev => { const n = JSON.parse(JSON.stringify(prev)); const k = path.split(”.”); let o = n; for (let i = 0; i < k.length - 1; i++) o = o[k[i]]; o[k[k.length - 1]] = val; return n; });
-const uA = (cat, idx, f, val) => set(prev => { const n = JSON.parse(JSON.stringify(prev)); n[cat][idx][f] = val; return n; });
-const del = (cat, idx) => set(prev => { const n = JSON.parse(JSON.stringify(prev)); n[cat].splice(idx, 1); return n; });
-const add = (cat, emoji, max) => set(prev => { const n = JSON.parse(JSON.stringify(prev)); if (n[cat].length >= max) { alert(“最大” + max + “品までです”); return prev; } n[cat].push({ e: emoji, n: “”, u: “”, p: “” }); return n; });
-
-const EF = [“🍉”,“🍓”,“🍈”,“🍅”,“🍊”,“🍋”,“🍌”,“🍎”,“🍏”,“🍐”,“🍑”,“🍒”,“🫐”,“🥝”,“🥭”,“🍍”,“🍇”,“🫒”,“🥥”,“🍆”];
-const EV = [“🥬”,“🥕”,“🧄”,“🧅”,“🫑”,“🥔”,“🍠”,“🎋”,“🌽”,“🥦”,“🥒”,“🫛”,“🥗”,“🍄”,“🫚”,“🥜”];
-
-const I = (p) => <input {…p} style={{ width: “100%”, border: “1px solid #ddd”, borderRadius: 6, padding: “8px 10px”, fontSize: 15, boxSizing: “border-box”, fontFamily: “inherit”, …p.style }} />;
-const H = ({ children }) => <div style={{ fontSize: 14, fontWeight: 900, color: “#5a3e1b”, margin: “14px 0 6px”, borderBottom: “2px solid #d4a05340”, paddingBottom: 4 }}>{children}</div>;
-const EP = ({ emojis, onPick }) => (
-<div style={{ display: “flex”, flexWrap: “wrap”, gap: 4, marginTop: 4, marginBottom: 6 }}>
-{emojis.map((em, i) => <button key={i} onClick={() => onPick(em)} style={{ fontSize: 20, background: “none”, border: “1px solid #e8e2d8”, borderRadius: 6, width: 34, height: 34, cursor: “pointer”, display: “flex”, alignItems: “center”, justifyContent: “center” }}>{em}</button>)}
-</div>
-);
-const Card = ({ cat, item, idx, emojis }) => (
-<div style={{ background: “#faf8f4”, border: “1px solid #e8e2d8”, borderRadius: 8, padding: 8, marginBottom: 6 }}>
-<div style={{ display: “flex”, gap: 6, marginBottom: 4 }}>
-<I value={item.e} onChange={e => uA(cat, idx, “e”, e.target.value)} style={{ width: 44, textAlign: “center” }} />
-<I value={item.n} onChange={e => uA(cat, idx, “n”, e.target.value)} placeholder=“商品名” style={{ flex: 1 }} />
-<button onClick={() => del(cat, idx)} style={{ background: “#e74c3c”, color: “#fff”, border: “none”, borderRadius: 6, width: 36, height: 36, fontSize: 18, cursor: “pointer”, flexShrink: 0 }}>×</button>
-</div>
-<div style={{ display: “flex”, flexWrap: “wrap”, gap: 3, marginBottom: 4 }}>
-{emojis.map((em, i) => <button key={i} onClick={() => uA(cat, idx, “e”, em)} style={{ fontSize: 16, background: item.e === em ? “#f0e6d0” : “none”, border: item.e === em ? “2px solid #8b6914” : “1px solid #e8e2d8”, borderRadius: 4, width: 28, height: 28, cursor: “pointer”, padding: 0, display: “flex”, alignItems: “center”, justifyContent: “center” }}>{em}</button>)}
-</div>
-<div style={{ display: “flex”, gap: 6 }}>
-<I value={item.u} onChange={e => uA(cat, idx, “u”, e.target.value)} placeholder=“単位（1袋等）” style={{ flex: 1 }} />
-<I value={item.p} onChange={e => uA(cat, idx, “p”, e.target.value)} placeholder=“価格” style={{ width: 90 }} />
-</div>
-</div>
-);
-const AB = ({ cat, emoji, color, label, max }) => (
-<button onClick={() => add(cat, emoji, max)} style={{ background: d[cat].length >= max ? “#ccc” : color, color: “#fff”, border: “none”, borderRadius: 6, padding: “8px 0”, width: “100%”, fontSize: 13, fontWeight: 700, cursor: d[cat].length >= max ? “default” : “pointer”, marginTop: 4 }}>
-{d[cat].length >= max ? “最大” + max + “品です” : label}（{d[cat].length}/{max}）
-</button>
-);
-return (
-<div style={{ padding: “12px 14px”, paddingBottom: 80 }}>
-<H>📅 日付・時間</H>
-<div style={{ display: “flex”, gap: 6 }}><I value={d.date} onChange={e => u(“date”, e.target.value)} style={{ flex: 2 }} /><I value={d.time} onChange={e => u(“time”, e.target.value)} style={{ flex: 1 }} /></div>
-<H>⭐ 大人気商品</H>
-<I value={d.feat.name} onChange={e => u(“feat.name”, e.target.value)} placeholder=“商品名” />
-<div style={{ display: “flex”, gap: 6, marginTop: 6 }}>
-<I value={d.feat.origin} onChange={e => u(“feat.origin”, e.target.value)} placeholder=“産地” style={{ flex: 1 }} />
-<I value={d.feat.unit} onChange={e => u(“feat.unit”, e.target.value)} placeholder=“単位” style={{ width: 70 }} />
-<I value={d.feat.price} onChange={e => u(“feat.price”, e.target.value)} placeholder=“価格” style={{ width: 70 }} />
-</div>
-<div style={{ fontSize: 11, color: “#888”, marginTop: 6 }}>アイコンを選択：</div>
-<EP emojis={[…EF, …EV]} onPick={em => u(“feat.emoji”, em)} />
-<H>🔥 大特価商品</H>
-<I value={d.special.name} onChange={e => u(“special.name”, e.target.value)} placeholder=“商品名” />
-<div style={{ display: “flex”, gap: 6, marginTop: 6 }}>
-<I value={d.special.price} onChange={e => u(“special.price”, e.target.value)} placeholder=“単価” style={{ width: 70 }} />
-<I value={d.special.bulkUnit} onChange={e => u(“special.bulkUnit”, e.target.value)} placeholder=“4パック” style={{ flex: 1 }} />
-<I value={d.special.bulkPrice} onChange={e => u(“special.bulkPrice”, e.target.value)} placeholder=“1,000” style={{ width: 70 }} />
-</div>
-<div style={{ fontSize: 11, color: “#888”, marginTop: 6 }}>アイコンを選択：</div>
-<EP emojis={EF} onPick={em => u(“special.emoji”, em)} />
-<H>🥬 野菜（最大{MAX_VEG}品）</H>
-{d.veg.map((it, i) => <Card key={i} cat="veg" item={it} idx={i} emojis={EV} />)}
-<AB cat="veg" emoji="🥬" color="#2d6a2e" label="＋ 野菜を追加" max={MAX_VEG} />
-<H>🍈 果物（最大{MAX_FRUIT}品）</H>
-{d.fruit.map((it, i) => <Card key={i} cat="fruit" item={it} idx={i} emojis={EF} />)}
-<AB cat="fruit" emoji="🍎" color="#c0392b" label="＋ 果物を追加" max={MAX_FRUIT} />
-<H>🍊 柑橘（最大{MAX_CITRUS}品）</H>
-{d.citrus.map((it, i) => <Card key={i} cat="citrus" item={it} idx={i} emojis={EF} />)}
-<AB cat="citrus" emoji="🍊" color="#d4880f" label="＋ 柑橘を追加" max={MAX_CITRUS} />
-</div>
-);
+function buildEditor(){
+  function inp(id,val,ph,st){return'<input id="'+id+'" value="'+esc(val)+'" placeholder="'+esc(ph)+'" oninput="upd()" style="'+(st||'')+'">';}
+  function emojiPicker(prefix,emojis){var h='<div class="ep">';for(var i=0;i<emojis.length;i++)h+='<button onclick="pickEmoji(\''+prefix+'\',\''+emojis[i]+'\')">'+emojis[i]+'</button>';return h+'</div>'}
+  function cardList(cat,items,emojis,max){
+    var h='';
+    for(var i=0;i<items.length;i++){
+      h+='<div class="card"><div class="top">'
+        +inp(cat+'_e_'+i,items[i].e,'','width:44px;text-align:center')
+        +inp(cat+'_n_'+i,items[i].n,'商品名','flex:1')
+        +'<button class="del-btn" onclick="delItem(\''+cat+'\','+i+')">×</button></div>'
+        +'<div class="emojis">';
+      for(var j=0;j<emojis.length;j++)h+='<button class="'+(items[i].e===emojis[j]?'sel':'')+'" onclick="pickItemEmoji(\''+cat+'\','+i+',\''+emojis[j]+'\')">'+emojis[j]+'</button>';
+      h+='</div><div class="bottom">'
+        +inp(cat+'_u_'+i,items[i].u,'単位（1袋等）','flex:1')
+        +inp(cat+'_p_'+i,items[i].p,'価格','width:90px')
+        +'</div></div>';
+    }
+    var full=items.length>=max;
+    h+='<button class="add-btn" style="background:'+(full?'#ccc':'#2d6a2e')+'" onclick="addItem(\''+cat+'\')">'+(full?'最大'+max+'品です':'＋ 追加')+'（'+items.length+'/'+max+'）</button>';
+    return h;
+  }
+  var h='<div class="edit-area">';
+  h+='<h3>📅 日付・時間</h3><div class="row">'+inp('date',D.date,'2026年4月26日(土)','flex:2')+inp('time',D.time,'14:00〜18:00','flex:1')+'</div>';
+  h+='<h3>⭐ 大人気商品</h3>'+inp('feat_name',D.feat.name,'商品名')+'<div class="row">'+inp('feat_origin',D.feat.origin,'産地','flex:1')+inp('feat_unit',D.feat.unit,'単位','width:70px')+inp('feat_price',D.feat.price,'価格','width:70px')+'</div><div style="font-size:11px;color:#888;margin-top:6px">アイコンを選択：</div>'+emojiPicker('feat',EF.concat(EV));
+  h+='<h3>🔥 大特価商品</h3>'+inp('sp_name',D.special.name,'商品名')+'<div class="row">'+inp('sp_price',D.special.price,'単価','width:70px')+inp('sp_bulk',D.special.bulkUnit,'4パック','flex:1')+inp('sp_bulkp',D.special.bulkPrice,'1,000','width:70px')+'</div><div style="font-size:11px;color:#888;margin-top:6px">アイコンを選択：</div>'+emojiPicker('sp',EF);
+  h+='<h3>🥬 野菜（最大'+MAX_VEG+'品）</h3>'+cardList('veg',D.veg,EV,MAX_VEG);
+  h+='<h3>🍈 果物（最大'+MAX_FRUIT+'品）</h3>'+cardList('fruit',D.fruit,EF,MAX_FRUIT);
+  h+='<h3>🍊 柑橘（最大'+MAX_CITRUS+'品）</h3>'+cardList('citrus',D.citrus,EF,MAX_CITRUS);
+  h+='</div>';
+  return h;
 }
 
-function App() {
-const [d, set] = useState(DEFAULT);
-const [tab, setTab] = useState(“edit”);
-const handlePrint = () => {
-const el = document.getElementById(“flyer”);
-const w = window.open(””, “*blank”);
-w.document.write(’<html><head><title>チラシ印刷</title><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet"><style>@page{size:A4 landscape;margin:0}body{margin:0}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}</style></head><body>’ + el.outerHTML + ‘</body></html>’);
+function buildSave(){
+  return'<div class="save-area">'
+  +'<div class="box"><h3>💾 今週のデータを保存</h3><p>来週はこのファイルを読み込んで価格だけ変えればOK！</p><button class="save-btn" onclick="saveJSON()">📥 データを保存する</button></div>'
+  +'<div class="box"><h3>📂 前回のデータを読み込む</h3><label class="load-label">📤 ファイルを選ぶ<input type="file" accept=".json" onchange="loadJSON(event)" style="display:none"></label></div>'
+  +'<div class="guide"><h3>📋 毎週の手順</h3><p>①「保存」→ 前回データを読み込む<br>②「入力」→ 今週の商品・価格に変更<br>③「確認」→ チラシをチェック<br>④「印刷」→ ボタンひとつで印刷！</p></div>'
+  +'</div>';
+}
+
+function render(){
+  var tabsH='';
+  var ts=[{id:'edit',icon:'✏️',label:'入力'},{id:'preview',icon:'👁',label:'確認'},{id:'print',icon:'🖨',label:'印刷'},{id:'save',icon:'💾',label:'保存'}];
+  for(var i=0;i<ts.length;i++)tabsH+='<button class="'+(tab===ts[i].id?'active':'')+'" onclick="switchTab(\''+ts[i].id+'\')">'+ts[i].icon+' '+ts[i].label+'</button>';
+  document.getElementById('tabs').innerHTML=tabsH;
+  var c=document.getElementById('content');
+  if(tab==='edit')c.innerHTML=buildEditor();
+  else if(tab==='preview')c.innerHTML='<div class="preview-area"><div class="hint">ピンチで拡大できます</div><div style="width:100%;overflow:auto"><div style="transform:scale(0.34);transform-origin:top left;width:297mm;margin-bottom:calc(-210mm * 0.66)">'+buildFlyer()+'</div></div></div>';
+  else if(tab==='save')c.innerHTML=buildSave();
+}
+
+function switchTab(t){
+  if(t==='print'){doPrint();return}
+  tab=t;render();
+}
+
+function upd(){
+  D.date=document.getElementById('date').value;
+  D.time=document.getElementById('time').value;
+  D.feat.name=document.getElementById('feat_name').value;
+  D.feat.origin=document.getElementById('feat_origin').value;
+  D.feat.unit=document.getElementById('feat_unit').value;
+  D.feat.price=document.getElementById('feat_price').value;
+  D.special.name=document.getElementById('sp_name').value;
+  D.special.price=document.getElementById('sp_price').value;
+  D.special.bulkUnit=document.getElementById('sp_bulk').value;
+  D.special.bulkPrice=document.getElementById('sp_bulkp').value;
+  for(var cat of['veg','fruit','citrus']){
+    for(var i=0;i<D[cat].length;i++){
+      var el;
+      el=document.getElementById(cat+'_e_'+i);if(el)D[cat][i].e=el.value;
+      el=document.getElementById(cat+'_n_'+i);if(el)D[cat][i].n=el.value;
+      el=document.getElementById(cat+'_u_'+i);if(el)D[cat][i].u=el.value;
+      el=document.getElementById(cat+'_p_'+i);if(el)D[cat][i].p=el.value;
+    }
+  }
+}
+
+function pickEmoji(prefix,em){
+  if(prefix==='feat')D.feat.emoji=em;
+  else if(prefix==='sp')D.special.emoji=em;
+}
+function pickItemEmoji(cat,idx,em){D[cat][idx].e=em;render();}
+function delItem(cat,idx){upd();D[cat].splice(idx,1);render();}
+function addItem(cat){
+  upd();
+  var max=cat==='veg'?MAX_VEG:cat==='fruit'?MAX_FRUIT:MAX_CITRUS;
+  if(D[cat].length>=max){alert('最大'+max+'品までです');return}
+  var de=cat==='veg'?'🥬':cat==='fruit'?'🍎':'🍊';
+  D[cat].push({e:de,n:'',u:'',p:''});render();
+}
+
+function doPrint(){
+  var w=window.open('','_blank');
+  w.document.write('<html><head><title>チラシ印刷</title><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet"><style>@page{size:A4 landscape;margin:0}body{margin:0}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}</style></head><body>'+buildFlyer()+'</body></html>');
+
 w.document.close();
-setTimeout(() => w.print(), 600);
-};
-const save = () => {
-const b = new Blob([JSON.stringify(d, null, 2)], { type: “application/json” });
-const a = document.createElement(“a”); a.href = URL.createObjectURL(b);
-a.download = “チラシ*” + d.date.replace(/[()（）]/g, “”) + “.json”; a.click();
-};
-const load = (e) => {
-const f = e.target.files && e.target.files[0]; if (!f) return;
-const r = new FileReader();
-r.onload = (ev) => { try { set(JSON.parse(ev.target.result)); } catch(x) { alert(“読み込めませんでした”); } };
-r.readAsText(f);
-};
-const tabs = [
-{ id: “edit”, icon: “✏️”, label: “入力” },
-{ id: “preview”, icon: “👁”, label: “確認” },
-{ id: “print”, icon: “🖨”, label: “印刷” },
-{ id: “save”, icon: “💾”, label: “保存” },
-];
-return (
-<div>
-<div style={{ background: “linear-gradient(135deg,#5a3e1b,#8b6914)”, color: “#fff”, padding: “12px 16px” }}>
-<div style={{ fontSize: 17, fontWeight: 900 }}>🌿 空花チラシメーカー</div>
-<div style={{ fontSize: 10, opacity: 0.8 }}>商品名と価格を入力するだけ！</div>
-</div>
-<div style={{ display: “flex”, background: “#fff”, borderBottom: “2px solid #e8e2d8”, position: “sticky”, top: 0, zIndex: 10 }}>
-{tabs.map(t => (
-<button key={t.id} onClick={() => { if (t.id === “print”) { handlePrint(); return; } setTab(t.id); }}
-style={{ flex: 1, padding: “10px 0”, border: “none”, cursor: “pointer”, fontSize: 13, fontWeight: 700, fontFamily: “inherit”,
-background: tab === t.id ? “#faf8f4” : “#fff”, color: tab === t.id ? “#5a3e1b” : “#aaa”,
-borderBottom: tab === t.id ? “3px solid #8b6914” : “3px solid transparent” }}>
-{t.icon} {t.label}
-</button>
-))}
-</div>
-{tab === “edit” && <Editor d={d} set={set} />}
-{tab === “preview” && (
-<div style={{ padding: 8, overflowX: “auto” }}>
-<div style={{ fontSize: 11, color: “#888”, textAlign: “center”, marginBottom: 6 }}>ピンチで拡大できます</div>
-<div style={{ width: “100%”, overflow: “auto” }}>
-<div style={{ transform: “scale(0.34)”, transformOrigin: “top left”, width: “297mm”, marginBottom: “calc(-210mm * 0.66)” }}>
-<Flyer d={d} />
-</div>
-</div>
-</div>
-)}
-{tab === “save” && (
-<div style={{ padding: 16 }}>
-<div style={{ background: “#fff”, borderRadius: 10, padding: 16, marginBottom: 12, boxShadow: “0 1px 4px rgba(0,0,0,0.06)” }}>
-<div style={{ fontSize: 15, fontWeight: 900, color: “#5a3e1b”, marginBottom: 8 }}>💾 今週のデータを保存</div>
-<div style={{ fontSize: 12, color: “#888”, marginBottom: 10 }}>来週はこのファイルを読み込んで価格だけ変えればOK！</div>
-<button onClick={save} style={{ background: “#27ae60”, color: “#fff”, border: “none”, borderRadius: 8, padding: “14px 0”, width: “100%”, fontSize: 15, fontWeight: 700, cursor: “pointer” }}>📥 データを保存する</button>
-</div>
-<div style={{ background: “#fff”, borderRadius: 10, padding: 16, marginBottom: 12, boxShadow: “0 1px 4px rgba(0,0,0,0.06)” }}>
-<div style={{ fontSize: 15, fontWeight: 900, color: “#5a3e1b”, marginBottom: 8 }}>📂 前回のデータを読み込む</div>
-<label style={{ display: “block”, textAlign: “center”, background: “#3498db”, color: “#fff”, borderRadius: 8, padding: “14px 0”, fontSize: 15, fontWeight: 700, cursor: “pointer” }}>
-📤 ファイルを選ぶ<input type=“file” accept=”.json” onChange={load} style={{ display: “none” }} />
-</label>
-</div>
-<div style={{ background: “#fef9e7”, borderRadius: 10, padding: 14, border: “1px solid #f0d78c” }}>
-<div style={{ fontSize: 13, fontWeight: 900, color: “#8b6914” }}>📋 毎週の手順</div>
-<div style={{ fontSize: 13, color: “#6b4c2a”, lineHeight: 2.2, marginTop: 6 }}>
-①「保存」→ 前回データを読み込む<br />
-②「入力」→ 今週の商品・価格に変更<br />
-③「確認」→ チラシをチェック<br />
-④「印刷」→ ボタンひとつで印刷！
-</div>
-</div>
-</div>
-)}
-</div>
-);
+setTimeout(function(){w.print()},600);
 }
 
-ReactDOM.createRoot(document.getElementById(“root”)).render(<App />);
+function saveJSON(){
+upd();
+var b=new Blob([JSON.stringify(D,null,2)],{type:‘application/json’});
+var a=document.createElement(‘a’);a.href=URL.createObjectURL(b);
+a.download=‘チラシ_’+D.date.replace(/[()（）]/g,’’)+’.json’;a.click();
+}
+function loadJSON(ev){
+var f=ev.target.files[0];if(!f)return;
+var r=new FileReader();
+r.onload=function(e){try{D=JSON.parse(e.target.result);render()}catch(x){alert(‘読み込めませんでした’)}};
+r.readAsText(f);
+}
+
+render();
 </script>
 
 </body>

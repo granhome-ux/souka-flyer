@@ -41,6 +41,7 @@ body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#f4f0e8;min-h
 .guide p{font-size:13px;color:#6b4c2a;line-height:2.2;margin-top:6px}
 .preview-area{padding:8px;overflow-x:auto}
 .preview-area .hint{font-size:11px;color:#888;text-align:center;margin-bottom:6px}
+.auto-saved{background:#e8f5e9;color:#2e7d32;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;text-align:center;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -51,8 +52,11 @@ body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#f4f0e8;min-h
 var MAX_VEG=13,MAX_FRUIT=6,MAX_CITRUS=6;
 var EF=["🍉","🍓","🍈","🍅","🍊","🍋","🍌","🍎","🍏","🍐","🍑","🍒","🫐","🥝","🥭","🍍","🍇","🫒","🥥","🍆"];
 var EV=["🥬","🥕","🧄","🧅","🫑","🥔","🍠","🎋","🌽","🥦","🥒","🫛","🥗","🍄","🫚","🥜"];
-var D={date:"2026年4月26日(土)",time:"14:00〜18:00",feat:{label:"大人気",origin:"熊本産",name:"スイカ（熊本）",unit:"1玉",price:"2000",emoji:"🍉"},special:{label:"大特価!",note:"いちご品種色々 早い者勝ち!",emoji:"🍓",name:"いちご",price:"300",bulkUnit:"4パック",bulkPrice:"1,000",bulkNote:"お得!"},veg:[{e:"🧄",n:"にんにく",u:"1袋(在庫限り)",p:"100"},{e:"🧅",n:"玉ねぎ（ひね）",u:"1袋",p:"100"},{e:"🥕",n:"人参",u:"1袋(4本入)",p:"100"},{e:"🫑",n:"ピーマン",u:"1袋",p:"100"},{e:"🥔",n:"ながいも（八戸）",u:"1袋",p:"200"},{e:"🍠",n:"さつまいも（八戸）",u:"1本",p:"100"},{e:"🍠",n:"シルクスィート",u:"1箱",p:"500"},{e:"🎋",n:"筍（タケノコ）S〜L",u:"",p:"時価"}],fruit:[{e:"🍈",n:"メロン",u:"1玉",p:"300"},{e:"🍅",n:"中玉トマト（ミディ）",u:"1パック",p:"200"}],citrus:[{e:"🍊",n:"甘夏",u:"3個",p:"200"},{e:"🍊",n:"清見オレンジ",u:"1個",p:"100"},{e:"🍊",n:"八朔（はっさく）",u:"1個",p:"100"}],notes:["いちごは1家族様につき、最大5ケースまで。","業者様と思われる方による大量購入は、禁止とさせていただきます。"],footer:"ここに掲載していない商品も多数用意してます！"};
+var DEFAULT_D={date:"2026年4月26日(土)",time:"14:00〜18:00",feat:{label:"大人気",origin:"熊本産",name:"スイカ（熊本）",unit:"1玉",price:"2000",emoji:"🍉"},special:{label:"大特価!",note:"いちご品種色々 早い者勝ち!",emoji:"🍓",name:"いちご",price:"300",bulkUnit:"4パック",bulkPrice:"1,000",bulkNote:"お得!"},veg:[{e:"🧄",n:"にんにく",u:"1袋(在庫限り)",p:"100"},{e:"🧅",n:"玉ねぎ（ひね）",u:"1袋",p:"100"},{e:"🥕",n:"人参",u:"1袋(4本入)",p:"100"},{e:"🫑",n:"ピーマン",u:"1袋",p:"100"},{e:"🥔",n:"ながいも（八戸）",u:"1袋",p:"200"},{e:"🍠",n:"さつまいも（八戸）",u:"1本",p:"100"},{e:"🍠",n:"シルクスィート",u:"1箱",p:"500"},{e:"🎋",n:"筍（タケノコ）S〜L",u:"",p:"時価"}],fruit:[{e:"🍈",n:"メロン",u:"1玉",p:"300"},{e:"🍅",n:"中玉トマト（ミディ）",u:"1パック",p:"200"}],citrus:[{e:"🍊",n:"甘夏",u:"3個",p:"200"},{e:"🍊",n:"清見オレンジ",u:"1個",p:"100"},{e:"🍊",n:"八朔（はっさく）",u:"1個",p:"100"}],notes:["いちごは1家族様につき、最大5ケースまで。","業者様と思われる方による大量購入は、禁止とさせていただきます。"],footer:"ここに掲載していない商品も多数用意してます！"};
+var D;
+try{var saved=localStorage.getItem('souka_flyer_data');D=saved?JSON.parse(saved):JSON.parse(JSON.stringify(DEFAULT_D))}catch(x){D=JSON.parse(JSON.stringify(DEFAULT_D))}
 var tab="edit";
+function autoSave(){try{localStorage.setItem('souka_flyer_data',JSON.stringify(D))}catch(x){}}
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function pr(v,sz){var m=v.match(/^(\d[\d,]*)(.*)/);if(m)return'<span style="font-size:'+sz+'px;font-weight:900;color:#b91c1c">'+esc(m[1])+'</span><span style="font-size:'+Math.round(sz*0.55)+'px;font-weight:800;color:#b91c1c">'+esc(m[2])+'</span>';return'<span style="font-size:'+Math.round(sz*0.75)+'px;font-weight:800;color:#b91c1c">'+esc(v)+'</span>'}
 function buildFlyer(){
@@ -73,6 +77,7 @@ var full=items.length>=max;
 h+='<button class="add-btn" style="background:'+(full?'#ccc':'#2d6a2e')+'" onclick="addItem(\''+cat+'\')">'+(full?'最大'+max+'品です':'＋ 追加')+'（'+items.length+'/'+max+'）</button>';
 return h;}
 var h='<div class="edit-area">';
+h+='<div class="auto-saved">✅ データは自動保存されます（ブラウザを閉じてもOK）</div>';
 h+='<h3>📅 日付・時間</h3><div class="row">'+inp('date',D.date,'2026年4月26日(土)','flex:2')+inp('time',D.time,'14:00〜18:00','flex:1')+'</div>';
 h+='<h3>⭐ 大人気商品</h3>'+inp('feat_name',D.feat.name,'商品名')+'<div class="row">'+inp('feat_origin',D.feat.origin,'産地','flex:1')+inp('feat_unit',D.feat.unit,'単位','width:70px')+inp('feat_price',D.feat.price,'価格','width:70px')+'</div><div style="font-size:11px;color:#888;margin-top:6px">アイコンを選択：</div>'+emojiPicker('feat',EF.concat(EV));
 h+='<h3>🔥 大特価商品</h3>'+inp('sp_name',D.special.name,'商品名')+'<div class="row">'+inp('sp_price',D.special.price,'単価','width:70px')+inp('sp_bulk',D.special.bulkUnit,'4パック','flex:1')+inp('sp_bulkp',D.special.bulkPrice,'1,000','width:70px')+'</div><div style="font-size:11px;color:#888;margin-top:6px">アイコンを選択：</div>'+emojiPicker('sp',EF);
@@ -82,7 +87,7 @@ h+='<h3>🍊 柑橘（最大'+MAX_CITRUS+'品）</h3>'+cardList('citrus',D.citru
 h+='</div>';
 return h;}
 function buildSave(){
-return'<div class="save-area"><div class="box"><h3>💾 今週のデータを保存</h3><p>来週はこのファイルを読み込んで価格だけ変えればOK！</p><button class="save-btn" onclick="saveJSON()">📥 データを保存する</button></div><div class="box"><h3>📂 前回のデータを読み込む</h3><label class="load-label">📤 ファイルを選ぶ<input type="file" accept=".json" onchange="loadJSON(event)" style="display:none"></label></div><div class="guide"><h3>📋 毎週の手順</h3><p>①「保存」→ 前回データを読み込む<br>②「入力」→ 今週の商品・価格に変更<br>③「確認」→ チラシをチェック<br>④「印刷」→ ボタンひとつで印刷！</p></div></div>';}
+return'<div class="save-area"><div class="auto-saved">✅ データは自動保存済み！ブラウザを閉じてもデータは残ります</div><div class="box"><h3>🔄 データをリセット</h3><p>初期データに戻したい場合はこちら</p><button class="save-btn" style="background:#e74c3c" onclick="resetData()">🗑 初期データに戻す</button></div><div class="box"><h3>📂 他の端末からデータを取り込む</h3><label class="load-label">📤 ファイルを選ぶ<input type="file" accept=".json" onchange="loadJSON(event)" style="display:none"></label></div><div class="box"><h3>💾 データをファイルに書き出す</h3><p>他の端末に渡したい場合はこちら</p><button class="save-btn" onclick="saveJSON()">📥 データを書き出す</button></div><div class="guide"><h3>📋 毎週の手順</h3><p>①「入力」→ 今週の商品・価格に変更<br>②「確認」→ チラシをチェック<br>③「印刷」→ ボタンひとつで印刷！<br><br>※データは自動保存されるので<br>　保存ボタンを押す必要はありません</p></div></div>';}
 function render(){
 var tabsH='';
 var ts=[{id:'edit',icon:'✏️',label:'入力'},{id:'preview',icon:'👁',label:'確認'},{id:'print',icon:'🖨',label:'印刷'},{id:'save',icon:'💾',label:'保存'}];
@@ -105,14 +110,16 @@ D.special.price=document.getElementById('sp_price').value;
 D.special.bulkUnit=document.getElementById('sp_bulk').value;
 D.special.bulkPrice=document.getElementById('sp_bulkp').value;
 var cats=['veg','fruit','citrus'];
-for(var c=0;c<cats.length;c++){var cat=cats[c];for(var i=0;i<D[cat].length;i++){var el;el=document.getElementById(cat+'_e_'+i);if(el)D[cat][i].e=el.value;el=document.getElementById(cat+'_n_'+i);if(el)D[cat][i].n=el.value;el=document.getElementById(cat+'_u_'+i);if(el)D[cat][i].u=el.value;el=document.getElementById(cat+'_p_'+i);if(el)D[cat][i].p=el.value}}}
-function pickEmoji(prefix,em){if(prefix==='feat')D.feat.emoji=em;else if(prefix==='sp')D.special.emoji=em}
-function pickItemEmoji(cat,idx,em){D[cat][idx].e=em;render()}
-function delItem(cat,idx){upd();D[cat].splice(idx,1);render()}
-function addItem(cat){upd();var max=cat==='veg'?MAX_VEG:cat==='fruit'?MAX_FRUIT:MAX_CITRUS;if(D[cat].length>=max){alert('最大'+max+'品までです');return}var de=cat==='veg'?'🥬':cat==='fruit'?'🍎':'🍊';D[cat].push({e:de,n:'',u:'',p:''});render()}
+for(var c=0;c<cats.length;c++){var cat=cats[c];for(var i=0;i<D[cat].length;i++){var el;el=document.getElementById(cat+'_e_'+i);if(el)D[cat][i].e=el.value;el=document.getElementById(cat+'_n_'+i);if(el)D[cat][i].n=el.value;el=document.getElementById(cat+'_u_'+i);if(el)D[cat][i].u=el.value;el=document.getElementById(cat+'_p_'+i);if(el)D[cat][i].p=el.value}}
+autoSave()}
+function pickEmoji(prefix,em){if(prefix==='feat')D.feat.emoji=em;else if(prefix==='sp')D.special.emoji=em;autoSave()}
+function pickItemEmoji(cat,idx,em){D[cat][idx].e=em;autoSave();render()}
+function delItem(cat,idx){upd();D[cat].splice(idx,1);autoSave();render()}
+function addItem(cat){upd();var max=cat==='veg'?MAX_VEG:cat==='fruit'?MAX_FRUIT:MAX_CITRUS;if(D[cat].length>=max){alert('最大'+max+'品までです');return}var de=cat==='veg'?'🥬':cat==='fruit'?'🍎':'🍊';D[cat].push({e:de,n:'',u:'',p:''});autoSave();render()}
 function doPrint(){var w=window.open('','_blank');w.document.write('<html><head><title>チラシ印刷</title><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet"><style>@page{size:A4 landscape;margin:0}body{margin:0}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}</style></head><body>'+buildFlyer()+'</body></html>');w.document.close();setTimeout(function(){w.print()},600)}
-function saveJSON(){upd();var b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='チラシ_'+D.date.replace(/[()（）]/g,'')+'.json';a.click()}
-function loadJSON(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{D=JSON.parse(e.target.result);render()}catch(x){alert('読み込めませんでした')}};r.readAsText(f)}
+function saveJSON(){upd();var t=JSON.stringify(D,null,2);var d='data:application/json;charset=utf-8,'+encodeURIComponent(t);var a=document.createElement('a');a.href=d;a.download='チラシ_'+D.date.replace(/[()（）]/g,'')+'.json';a.style.display='none';document.body.appendChild(a);a.click();document.body.removeChild(a)}
+function loadJSON(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{D=JSON.parse(e.target.result);autoSave();render();alert('読み込み完了！')}catch(x){alert('読み込めませんでした')}};r.readAsText(f)}
+function resetData(){if(confirm('本当に初期データに戻しますか？')){D=JSON.parse(JSON.stringify(DEFAULT_D));autoSave();render()}}
 try{render()}catch(e){document.getElementById('content').innerHTML='<div style="color:red;padding:20px">エラー: '+e.message+'</div>'}
 </script>
 </body>

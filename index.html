@@ -201,7 +201,9 @@ function upd(){
   D.special.price=document.getElementById('sp_price').value;
   D.special.bulkUnit=document.getElementById('sp_bulk').value;
   D.special.bulkPrice=document.getElementById('sp_bulkp').value;
-  for(var cat of['veg','fruit','citrus']){
+  var cats=['veg','fruit','citrus'];
+  for(var c=0;c<cats.length;c++){
+    var cat=cats[c];
     for(var i=0;i<D[cat].length;i++){
       var el;
       el=document.getElementById(cat+'_e_'+i);if(el)D[cat][i].e=el.value;
@@ -247,7 +249,7 @@ r.onload=function(e){try{D=JSON.parse(e.target.result);render()}catch(x){alert(�
 r.readAsText(f);
 }
 
-render();
+try{render();}catch(e){document.getElementById(‘content’).innerHTML=’<div style="color:red;padding:20px;font-size:16px">エラー: ‘+e.message+’</div>’;}
 </script>
 
 </body>

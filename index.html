@@ -203,31 +203,22 @@ setTimeout(function(){w.print()},800);
 }
 
 function render(){
-// ページ切替ボタン
 var psH=’’;
-var pages=[{id:‘page1’,label:‘📄 1ページ目（営業案内）’},{id:‘page2’,label:‘🍎 2ページ目（商品一覧）’}];
-for(var i=0;i<pages.length;i++){
-psH+=’<button class="'+(currentPage===pages[i].id?'active':'')+'" onclick="switchPage(\''+pages[i].id+'\')">’+pages[i].label+’</button>’;
-}
+var pages=[{id:‘page1’,label:’\u{1F4C4} 1\u30DA\u30FC\u30B8\u76EE\uFF08\u55B6\u696D\u6848\u5185\uFF09’},{id:‘page2’,label:’\u{1F34E} 2\u30DA\u30FC\u30B8\u76EE\uFF08\u5546\u54C1\u4E00\u89A7\uFF09’}];
+for(var i=0;i<pages.length;i++){psH+=’<button class="'+(currentPage===pages[i].id?'active':'')+'" onclick="switchPage(\x27'+pages[i].id+'\x27)">’+pages[i].label+’</button>’}
 document.getElementById(‘pageSwitch’).innerHTML=psH;
-
-// タブボタン
 var tabsH=’’;
-var ts=[{id:‘edit’,icon:‘✏️’,label:‘入力’},{id:‘preview’,icon:‘👁’,label:‘確認’},{id:‘print’,icon:‘🖨’,label:‘印刷’},{id:‘save’,icon:‘💾’,label:‘保存’}];
-for(var i=0;i<ts.length;i++){
-tabsH+=’<button class="'+(tab===ts[i].id?'active':'')+'" onclick="switchTab(\''+ts[i].id+'\')">’+ts[i].icon+’ ‘+ts[i].label+’</button>’;
-}
+var ts=[{id:‘edit’,icon:’\u270F\uFE0F’,label:’\u5165\u529B’},{id:‘preview’,icon:’\u{1F441}’,label:’\u78BA\u8A8D’},{id:‘print’,icon:’\u{1F5A8}’,label:’\u5370\u5237’},{id:‘save’,icon:’\u{1F4BE}’,label:’\u4FDD\u5B58’}];
+for(var i=0;i<ts.length;i++){tabsH+=’<button class="'+(tab===ts[i].id?'active':'')+'" onclick="switchTab(\x27'+ts[i].id+'\x27)">’+ts[i].icon+’ ‘+ts[i].label+’</button>’}
 document.getElementById(‘tabs’).innerHTML=tabsH;
-
-// コンテンツ
 var c=document.getElementById(‘content’);
 if(currentPage===‘page1’){
 if(tab===‘edit’){c.innerHTML=buildEditor1()}
-else if(tab===‘preview’){c.innerHTML=’<div class="preview-area"><div class="hint">ピンチで拡大できます</div><div style="width:100%;overflow:auto"><div style="transform:scale(0.34);transform-origin:top left;width:297mm;margin-bottom:calc(-210mm * 0.66)">’+buildFlyer1()+’</div></div></div>’}
+else if(tab===‘preview’){c.innerHTML=’<div class="preview-area"><div class="hint">\u30D4\u30F3\u30C1\u3067\u62E1\u5927\u3067\u304D\u307E\u3059</div><div style="width:100%;overflow:auto"><div style="transform:scale(0.34);transform-origin:top left;width:297mm;margin-bottom:calc(-210mm * 0.66)">’+buildFlyer1()+’</div></div></div>’}
 else if(tab===‘save’){c.innerHTML=buildSave1()}
 }else{
 if(tab===‘edit’){c.innerHTML=buildEditor2()}
-else if(tab===‘preview’){c.innerHTML=’<div class="preview-area"><div class="hint">ピンチで拡大できます</div><div style="width:100%;overflow:auto"><div style="transform:scale(0.34);transform-origin:top left;width:297mm;margin-bottom:calc(-210mm * 0.66)">’+buildFlyer2()+’</div></div></div>’}
+else if(tab===‘preview’){c.innerHTML=’<div class="preview-area"><div class="hint">\u30D4\u30F3\u30C1\u3067\u62E1\u5927\u3067\u304D\u307E\u3059</div><div style="width:100%;overflow:auto"><div style="transform:scale(0.34);transform-origin:top left;width:297mm;margin-bottom:calc(-210mm * 0.66)">’+buildFlyer2()+’</div></div></div>’}
 else if(tab===‘save’){c.innerHTML=buildSave2()}
 }
 }

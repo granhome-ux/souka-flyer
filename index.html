@@ -80,7 +80,7 @@ var h='<div class="edit-area">';
 h+='<div class="auto-saved">✅ データは自動保存されます（ブラウザを閉じてもOK）</div>';
 h+='<h3>📅 日付・時間</h3><div class="row">'+inp('date',D.date,'2026年4月26日(土)','flex:2')+inp('time',D.time,'14:00〜18:00','flex:1')+'</div>';
 h+='<h3>⭐ 大人気商品</h3>'+inp('feat_name',D.feat.name,'商品名')+'<div class="row">'+inp('feat_origin',D.feat.origin,'産地','flex:1')+inp('feat_unit',D.feat.unit,'単位','width:70px')+inp('feat_price',D.feat.price,'価格','width:70px')+'</div><div style="font-size:11px;color:#888;margin-top:6px">アイコンを選択：</div>'+emojiPicker('feat',EF.concat(EV));
-h+='<h3>🔥 大特価商品</h3>'+inp('sp_name',D.special.name,'商品名')+'<div class="row">'+inp('sp_price',D.special.price,'単価','width:70px')+inp('sp_bulk',D.special.bulkUnit,'4パック','flex:1')+inp('sp_bulkp',D.special.bulkPrice,'1,000','width:70px')+'</div><div style="font-size:11px;color:#888;margin-top:6px">アイコンを選択：</div>'+emojiPicker('sp',EF);
+h+='<h3>🔥 大特価商品</h3>'+inp('sp_name',D.special.name,'商品名')+'<div class="row">'+inp('sp_price',D.special.price,'単価','width:70px')+inp('sp_bulk',D.special.bulkUnit,'4パック','flex:1')+inp('sp_bulkp',D.special.bulkPrice,'1,000','width:70px')+'</div><div style="font-size:11px;color:#888;margin-top:6px">アイコンを選択：</div>'+emojiPicker('sp',EF.concat(EV));
 h+='<h3>🥬 野菜（最大'+MAX_VEG+'品）</h3>'+cardList('veg',D.veg,EV,MAX_VEG);
 h+='<h3>🍈 果物（最大'+MAX_FRUIT+'品）</h3>'+cardList('fruit',D.fruit,EF,MAX_FRUIT);
 h+='<h3>🍊 柑橘（最大'+MAX_CITRUS+'品）</h3>'+cardList('citrus',D.citrus,EF,MAX_CITRUS);

@@ -1,13 +1,18 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>株式会社空花 直売チラシ 2ページ目</title>
 <style>
+  @font-face {
+    font-family: "RiiCookieR";
+    src: url("fonts/RiiCookieR.otf") format("opentype");
+    font-display: swap;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: "Yu Mincho", "游明朝", "Hiragino Mincho ProN", serif;
+    font-family: "RiiCookieR", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", serif;
     background: #ede4d0;
     padding: 20px;
     min-height: 100vh;
@@ -60,7 +65,7 @@
     line-height: 1.5;
     padding: 4px 8px;
     border-radius: 4px;
-    font-family: "Yu Gothic", "游ゴシック", sans-serif;
+    font-family: "RiiCookieR", "Yu Gothic", "游ゴシック", sans-serif;
   }
   .notice[contenteditable="true"]:focus {
     outline: 2px dashed #8b6914;
@@ -98,14 +103,14 @@
     border-radius: 4px;
     font-size: 26px;
     font-weight: bold;
-    font-family: "Yu Gothic", sans-serif;
+    font-family: "RiiCookieR", "Yu Gothic", sans-serif;
     margin-bottom: 4px;
   }
   .badge-subtitle {
     display: inline-block;
     font-size: 18px;
     color: #3a2f1f;
-    font-family: "Yu Gothic", sans-serif;
+    font-family: "RiiCookieR", "Yu Gothic", sans-serif;
     margin-left: 8px;
     vertical-align: middle;
   }
@@ -113,7 +118,7 @@
     font-size: 24px;
     color: #3a2f1f;
     font-weight: bold;
-    font-family: "Yu Gothic", sans-serif;
+    font-family: "RiiCookieR", "Yu Gothic", sans-serif;
     margin-bottom: 8px;
     text-align: center;
   }
@@ -128,9 +133,9 @@
     gap: 10px;
     height: 100%;
   }
-  .hero-text .origin { font-size: 22px; color: #3a2f1f; font-family: "Yu Gothic", sans-serif; }
-  .hero-text .name { font-size: 42px; font-weight: bold; color: #3a2f1f; font-family: "Yu Gothic", sans-serif; line-height: 1.1; }
-  .hero-text .price { font-size: 32px; color: #6b1818; font-weight: bold; font-family: "Yu Gothic", sans-serif; margin-top: 6px; }
+  .hero-text .origin { font-size: 22px; color: #3a2f1f; font-family: "RiiCookieR", "Yu Gothic", sans-serif; }
+  .hero-text .name { font-size: 42px; font-weight: bold; color: #3a2f1f; font-family: "RiiCookieR", "Yu Gothic", sans-serif; line-height: 1.1; }
+  .hero-text .price { font-size: 32px; color: #6b1818; font-weight: bold; font-family: "RiiCookieR", "Yu Gothic", sans-serif; margin-top: 6px; }
   .hero-img { width: 180px; height: 180px; object-fit: contain; }
 
   /* 商品リスト */
@@ -144,7 +149,7 @@
     grid-template-columns: 48px 1fr auto;
     align-items: center;
     gap: 8px;
-    font-family: "Yu Gothic", sans-serif;
+    font-family: "RiiCookieR", "Yu Gothic", sans-serif;
     padding: 2px 0;
   }
   .product-row.editing { background: rgba(255, 248, 220, 0.6); border-radius: 4px; }
@@ -280,10 +285,10 @@
     </div>
     <div style="display:grid; grid-template-columns: 1fr auto auto; align-items:center; gap:10px;">
       <img data-field="deal.image" src="images/IMG_1763.png" style="width:120px; height:120px; object-fit:contain;" alt="いちご">
-      <div style="font-size: 36px; font-weight:bold; color:#3a2f1f; font-family:'Yu Gothic',sans-serif;" data-field="deal.name">いちご</div>
-      <div style="font-size: 30px; color:#6b1818; font-weight:bold; font-family:'Yu Gothic',sans-serif;"><span data-field="deal.price">300</span>円</div>
+      <div style="font-size: 36px; font-weight:bold; color:#3a2f1f; font-family: 'RiiCookieR', 'Yu Gothic', sans-serif;" data-field="deal.name">いちご</div>
+      <div style="font-size: 30px; color:#6b1818; font-weight:bold; font-family: 'RiiCookieR', 'Yu Gothic', sans-serif;"><span data-field="deal.price">300</span>円</div>
     </div>
-    <div style="font-size: 22px; font-weight:bold; color:#3a2f1f; font-family:'Yu Gothic',sans-serif; margin-top:6px; text-align:center;">
+    <div style="font-size: 22px; font-weight:bold; color:#3a2f1f; font-family: 'RiiCookieR', 'Yu Gothic', sans-serif; margin-top:6px; text-align:center;">
       <span data-field="deal.pack">4パック</span> <span style="color:#6b1818;"><span data-field="deal.pack_price">1,000</span>円</span><span style="font-size:16px;">(お得！)</span>
     </div>
   </div>

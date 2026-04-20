@@ -5,3 +5,7 @@ images/_preview_compare/
 
 # Claude Code local state
 .claude/
+
+# Local experimental scripts
+_mapping.py
+_mapping.json
